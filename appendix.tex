@@ -1,0 +1,28 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+\subsection{Cloaking of UTXO Recipient Public Keys}
+Consider a situation where a recipient needs to prove ownership of an isolated UTXO, rather than the more usual situation of that UTXO being referenced in a transaction.
+
+When he shows ownership, we want to see that he knows the $\gamma$ cloaking factor used in the Pedersen commitment because that knowledge also implies knowledge of the amount.\footnote{Knowledge of $\gamma \, G$ allows anyone, even those not privy to the encrypted payload contents, to derive the amount by mounting a small-domain ECDLP, since amount, $x \in [0, 2^{64}).$ Knowledge of $\gamma$, beyond just knowing $\gamma \, G$, also allows potential spending of the amount, $x$.}
+
+A rightful owner knows the amount and $\gamma$ factor by decrypting the UTXO encrypted payload.
+
+So at the very least, we would like to have an ownership signature that shows knowledge of $\gamma$.
+
+If we cloak the recipient's public key in the UTXO using only $\gamma$, as with:
+$$P_{UTXO} = P_{true} + \gamma \, G$$
+that would provide what we want. But leakage of their actual public key, $P_{true}$, has possibly a higher likelihood than leaking of $\gamma$.
+
+In that case, knowledge of $P_{true}$ leads directly to the $\gamma \, G$ cloaking term, which was also used by the Pedersen commitment. Hence the amount could be determined by a small-domain ECDLP.
+So we want something that offers more safety against leaking $P_{true}$. 
+
+If we cloak with a completely independent factor, $\delta$, as with:
+$$P_{UTXO} = P_{true} + \delta \, G$$
+then disclosing $P_{true}$ cannot endanger the Pedersen commitment. But the ownership signature would also reveal nothing about knowledge of $\gamma$.
+
+Instead, by using both $\gamma$ and $\delta$ random factors for cloaking the public key:
+$$P_{UTXO} = P_{true} + \gamma \, \delta \, G$$
+an ownership signature shows knowledge of $\gamma$. And leakage of $P_{true}$ does not endanger the Pedersen commitment.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
